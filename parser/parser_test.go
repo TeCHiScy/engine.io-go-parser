@@ -17,12 +17,12 @@ func TestParserv3(t *testing.T) {
 		if b := p.hasBinary([]*packet.Packet{
 			nil,
 			{
-				Type:    packet.CLOSE,
+				Type:    packet.Close,
 				Data:    strings.NewReader("test测试中文和表情字符❤️🧡💛🧓🏾💟"),
 				Options: nil,
 			},
 			{
-				Type:    packet.OPEN,
+				Type:    packet.Open,
 				Data:    bytes.NewBuffer([]byte("ABC")),
 				Options: nil,
 			},
@@ -39,7 +39,7 @@ func TestParserv3(t *testing.T) {
 
 	t.Run("EncodePacket/Error", func(t *testing.T) {
 		data, err := p.EncodePacket(&packet.Packet{
-			Type:    packet.ERROR,
+			Type:    packet.Error,
 			Data:    strings.NewReader("test测试中文和表情字符❤️🧡💛🧓🏾💟"),
 			Options: nil,
 		}, false, false)
@@ -54,7 +54,7 @@ func TestParserv3(t *testing.T) {
 
 	t.Run("EncodePacket/Byte", func(t *testing.T) {
 		data, err := p.EncodePacket(&packet.Packet{
-			Type:    packet.OPEN,
+			Type:    packet.Open,
 			Data:    bytes.NewBuffer([]byte("ABC")),
 			Options: nil,
 		}, true)
@@ -70,7 +70,7 @@ func TestParserv3(t *testing.T) {
 
 	t.Run("EncodePacket/Byte/Base64", func(t *testing.T) {
 		data, err := p.EncodePacket(&packet.Packet{
-			Type:    packet.OPEN,
+			Type:    packet.Open,
 			Data:    bytes.NewBuffer([]byte("ABC")),
 			Options: nil,
 		}, false)
@@ -87,7 +87,7 @@ func TestParserv3(t *testing.T) {
 
 	t.Run("EncodePacket/String", func(t *testing.T) {
 		data, err := p.EncodePacket(&packet.Packet{
-			Type:    packet.OPEN,
+			Type:    packet.Open,
 			Data:    strings.NewReader("test测试中文和表情字符❤️🧡💛🧓🏾💟"),
 			Options: nil,
 		}, false, false)
@@ -103,7 +103,7 @@ func TestParserv3(t *testing.T) {
 
 	t.Run("EncodePacket/String/Utf8encode", func(t *testing.T) {
 		data, err := p.EncodePacket(&packet.Packet{
-			Type:    packet.OPEN,
+			Type:    packet.Open,
 			Data:    strings.NewReader("test测试中文和表情字符❤️🧡💛🧓🏾💟"),
 			Options: nil,
 		}, false, true)
@@ -111,7 +111,7 @@ func TestParserv3(t *testing.T) {
 		if err != nil {
 			t.Fatal("Error with EncodePacket:", err)
 		}
-		check3 := []byte{PacketTypes[packet.OPEN], 116, 101, 115, 116, 195, 166, 194, 181, 194, 139, 195, 168, 194, 175, 194, 149, 195, 164, 194, 184, 194, 173, 195, 166, 194, 150, 194, 135, 195, 165, 194, 146, 194, 140, 195, 168, 194, 161, 194, 168, 195, 166, 194, 131, 194, 133, 195, 165, 194, 173, 194, 151, 195, 167, 194, 172, 194, 166, 195, 162, 194, 157, 194, 164, 195, 175, 194, 184, 194, 143, 195, 176, 194, 159, 194, 167, 194, 161, 195, 176, 194, 159, 194, 146, 194, 155, 195, 176, 194, 159, 194, 167, 194, 147, 195, 176, 194, 159, 194, 143, 194, 190, 195, 176, 194, 159, 194, 146, 194, 159}
+		check3 := []byte{PacketTypes[packet.Open], 116, 101, 115, 116, 195, 166, 194, 181, 194, 139, 195, 168, 194, 175, 194, 149, 195, 164, 194, 184, 194, 173, 195, 166, 194, 150, 194, 135, 195, 165, 194, 146, 194, 140, 195, 168, 194, 161, 194, 168, 195, 166, 194, 131, 194, 133, 195, 165, 194, 173, 194, 151, 195, 167, 194, 172, 194, 166, 195, 162, 194, 157, 194, 164, 195, 175, 194, 184, 194, 143, 195, 176, 194, 159, 194, 167, 194, 161, 195, 176, 194, 159, 194, 146, 194, 155, 195, 176, 194, 159, 194, 167, 194, 147, 195, 176, 194, 159, 194, 143, 194, 190, 195, 176, 194, 159, 194, 146, 194, 159}
 		if b := data.Bytes(); !bytes.Equal(b, check3) {
 			t.Fatalf(`EncodePacket value not as expected: %v, want match for %v`, b, check3)
 		}
@@ -119,7 +119,7 @@ func TestParserv3(t *testing.T) {
 
 	t.Run("encodeOneBinaryPacket", func(t *testing.T) {
 		data, err := p.encodeOneBinaryPacket(&packet.Packet{
-			Type:    packet.OPEN,
+			Type:    packet.Open,
 			Data:    bytes.NewBuffer([]byte("ABC")),
 			Options: nil,
 		})
@@ -135,7 +135,7 @@ func TestParserv3(t *testing.T) {
 
 	t.Run("encodeOneBinaryPacket/String", func(t *testing.T) {
 		data, err := p.encodeOneBinaryPacket(&packet.Packet{
-			Type:    packet.OPEN,
+			Type:    packet.Open,
 			Data:    strings.NewReader("test测试中文和表情字符❤️🧡💛🧓🏾💟"),
 			Options: nil,
 		})
@@ -156,8 +156,8 @@ func TestParserv3(t *testing.T) {
 			t.Fatal("Error with DecodePacket:", err)
 		}
 
-		if pack.Type != packet.CLOSE {
-			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.CLOSE)
+		if pack.Type != packet.Close {
+			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.Close)
 		}
 
 		if pack.Data == nil {
@@ -181,14 +181,14 @@ func TestParserv3(t *testing.T) {
 	})
 
 	t.Run("DecodePacket/Byte", func(t *testing.T) {
-		pack, err := p.DecodePacket(types.NewBytesBuffer([]byte{PacketTypes[packet.CLOSE] - '0', 65, 66, 67}))
+		pack, err := p.DecodePacket(types.NewBytesBuffer([]byte{PacketTypes[packet.Close] - '0', 65, 66, 67}))
 
 		if err != nil {
 			t.Fatal("Error with DecodePacket:", err)
 		}
 
-		if pack.Type != packet.CLOSE {
-			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.CLOSE)
+		if pack.Type != packet.Close {
+			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.Close)
 		}
 
 		if pack.Data == nil {
@@ -212,14 +212,14 @@ func TestParserv3(t *testing.T) {
 	})
 
 	t.Run("DecodePacket/String/Utf8decode", func(t *testing.T) {
-		pack, err := p.DecodePacket(types.NewStringBuffer([]byte{PacketTypes[packet.PING], 116, 101, 115, 116, 195, 166, 194, 181, 194, 139, 195, 168, 194, 175, 194, 149, 195, 164, 194, 184, 194, 173, 195, 166, 194, 150, 194, 135, 195, 165, 194, 146, 194, 140, 195, 168, 194, 161, 194, 168, 195, 166, 194, 131, 194, 133, 195, 165, 194, 173, 194, 151, 195, 167, 194, 172, 194, 166, 195, 162, 194, 157, 194, 164, 195, 175, 194, 184, 194, 143, 195, 176, 194, 159, 194, 167, 194, 161, 195, 176, 194, 159, 194, 146, 194, 155, 195, 176, 194, 159, 194, 167, 194, 147, 195, 176, 194, 159, 194, 143, 194, 190, 195, 176, 194, 159, 194, 146, 194, 159}), true)
+		pack, err := p.DecodePacket(types.NewStringBuffer([]byte{PacketTypes[packet.Ping], 116, 101, 115, 116, 195, 166, 194, 181, 194, 139, 195, 168, 194, 175, 194, 149, 195, 164, 194, 184, 194, 173, 195, 166, 194, 150, 194, 135, 195, 165, 194, 146, 194, 140, 195, 168, 194, 161, 194, 168, 195, 166, 194, 131, 194, 133, 195, 165, 194, 173, 194, 151, 195, 167, 194, 172, 194, 166, 195, 162, 194, 157, 194, 164, 195, 175, 194, 184, 194, 143, 195, 176, 194, 159, 194, 167, 194, 161, 195, 176, 194, 159, 194, 146, 194, 155, 195, 176, 194, 159, 194, 167, 194, 147, 195, 176, 194, 159, 194, 143, 194, 190, 195, 176, 194, 159, 194, 146, 194, 159}), true)
 
 		if err != nil {
 			t.Fatal("Error with DecodePacket:", err)
 		}
 
-		if pack.Type != packet.PING {
-			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.PING)
+		if pack.Type != packet.Ping {
+			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.Ping)
 		}
 
 		if pack.Data == nil {
@@ -249,8 +249,8 @@ func TestParserv3(t *testing.T) {
 			t.Fatal("Error with DecodePacket:", err)
 		}
 
-		if pack.Type != packet.PING {
-			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.PING)
+		if pack.Type != packet.Ping {
+			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.Ping)
 		}
 
 		if pack.Data == nil {
@@ -280,8 +280,8 @@ func TestParserv3(t *testing.T) {
 			t.Fatal("DecodePacket error must be not nil")
 		}
 
-		if pack.Type != packet.ERROR {
-			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.ERROR)
+		if pack.Type != packet.Error {
+			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.Error)
 		}
 
 		if pack.Data == nil {
@@ -293,12 +293,12 @@ func TestParserv3(t *testing.T) {
 		data, err := p.EncodePayload(
 			[]*packet.Packet{
 				{
-					Type:    packet.OPEN,
+					Type:    packet.Open,
 					Data:    bytes.NewBuffer([]byte("ABC")),
 					Options: nil,
 				},
 				{
-					Type:    packet.CLOSE,
+					Type:    packet.Close,
 					Data:    strings.NewReader("test测试中文和表情字符❤️🧡💛🧓🏾💟"),
 					Options: nil,
 				},
@@ -317,12 +317,12 @@ func TestParserv3(t *testing.T) {
 		data, err := p.EncodePayload(
 			[]*packet.Packet{
 				{
-					Type:    packet.OPEN,
+					Type:    packet.Open,
 					Data:    bytes.NewBuffer([]byte("ABC")),
 					Options: nil,
 				},
 				{
-					Type:    packet.CLOSE,
+					Type:    packet.Close,
 					Data:    strings.NewReader("test测试中文和表情字符❤️🧡💛🧓🏾💟"),
 					Options: nil,
 				},
@@ -351,8 +351,8 @@ func TestParserv3(t *testing.T) {
 
 		func() {
 
-			if tp := packs[0].Type; tp != packet.OPEN {
-				t.Fatalf(`DecodePayload packs[0].Type value not as expected: %q, want match for %q`, tp, packet.OPEN)
+			if tp := packs[0].Type; tp != packet.Open {
+				t.Fatalf(`DecodePayload packs[0].Type value not as expected: %q, want match for %q`, tp, packet.Open)
 			}
 
 			if packs[0].Data == nil {
@@ -377,8 +377,8 @@ func TestParserv3(t *testing.T) {
 
 		func() {
 
-			if tp := packs[1].Type; tp != packet.CLOSE {
-				t.Fatalf(`DecodePayload packs[1].Type value not as expected: %q, want match for %q`, tp, packet.CLOSE)
+			if tp := packs[1].Type; tp != packet.Close {
+				t.Fatalf(`DecodePayload packs[1].Type value not as expected: %q, want match for %q`, tp, packet.Close)
 			}
 
 			if packs[1].Data == nil {
@@ -411,8 +411,8 @@ func TestParserv3(t *testing.T) {
 
 		func() {
 
-			if tp := packs[0].Type; tp != packet.OPEN {
-				t.Fatalf(`DecodePayload packs[0].Type value not as expected: %q, want match for %q`, tp, packet.OPEN)
+			if tp := packs[0].Type; tp != packet.Open {
+				t.Fatalf(`DecodePayload packs[0].Type value not as expected: %q, want match for %q`, tp, packet.Open)
 			}
 
 			if packs[0].Data == nil {
@@ -437,8 +437,8 @@ func TestParserv3(t *testing.T) {
 
 		func() {
 
-			if tp := packs[1].Type; tp != packet.CLOSE {
-				t.Fatalf(`DecodePayload packs[1].Type value not as expected: %q, want match for %q`, tp, packet.CLOSE)
+			if tp := packs[1].Type; tp != packet.Close {
+				t.Fatalf(`DecodePayload packs[1].Type value not as expected: %q, want match for %q`, tp, packet.Close)
 			}
 
 			if packs[1].Data == nil {
@@ -475,7 +475,7 @@ func TestParserv4(t *testing.T) {
 
 	t.Run("EncodePacket/Byte", func(t *testing.T) {
 		data, err := p.EncodePacket(&packet.Packet{
-			Type:    packet.OPEN,
+			Type:    packet.Open,
 			Data:    bytes.NewBuffer([]byte("ABC")),
 			Options: nil,
 		}, true)
@@ -491,7 +491,7 @@ func TestParserv4(t *testing.T) {
 
 	t.Run("EncodePacket/Byte/Base64", func(t *testing.T) {
 		data, err := p.EncodePacket(&packet.Packet{
-			Type:    packet.OPEN,
+			Type:    packet.Open,
 			Data:    bytes.NewBuffer([]byte("ABC")),
 			Options: nil,
 		}, false)
@@ -508,7 +508,7 @@ func TestParserv4(t *testing.T) {
 
 	t.Run("EncodePacket/String", func(t *testing.T) {
 		data, err := p.EncodePacket(&packet.Packet{
-			Type:    packet.OPEN,
+			Type:    packet.Open,
 			Data:    strings.NewReader("test测试中文和表情字符❤️🧡💛🧓🏾💟"),
 			Options: nil,
 		}, false)
@@ -529,8 +529,8 @@ func TestParserv4(t *testing.T) {
 			t.Fatal("Error with DecodePacket:", err)
 		}
 
-		if pack.Type != packet.MESSAGE {
-			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.MESSAGE)
+		if pack.Type != packet.Message {
+			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.Message)
 		}
 
 		if pack.Data == nil {
@@ -560,8 +560,8 @@ func TestParserv4(t *testing.T) {
 			t.Fatal("Error with DecodePacket:", err)
 		}
 
-		if pack.Type != packet.MESSAGE {
-			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.MESSAGE)
+		if pack.Type != packet.Message {
+			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.Message)
 		}
 
 		if pack.Data == nil {
@@ -591,8 +591,8 @@ func TestParserv4(t *testing.T) {
 			t.Fatal("Error with DecodePacket:", err)
 		}
 
-		if pack.Type != packet.PING {
-			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.PING)
+		if pack.Type != packet.Ping {
+			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.Ping)
 		}
 
 		if pack.Data == nil {
@@ -619,12 +619,12 @@ func TestParserv4(t *testing.T) {
 		data, err := p.EncodePayload(
 			[]*packet.Packet{
 				{
-					Type:    packet.OPEN,
+					Type:    packet.Open,
 					Data:    bytes.NewBuffer([]byte("ABC")),
 					Options: nil,
 				},
 				{
-					Type:    packet.CLOSE,
+					Type:    packet.Close,
 					Data:    strings.NewReader("test测试中文和表情字符❤️🧡💛🧓🏾💟"),
 					Options: nil,
 				},
@@ -646,8 +646,8 @@ func TestParserv4(t *testing.T) {
 			t.Fatal("DecodePacket error must be not nil")
 		}
 
-		if pack.Type != packet.ERROR {
-			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.ERROR)
+		if pack.Type != packet.Error {
+			t.Fatalf(`DecodePacket *Packet.Type value not as expected: %q, want match for %q`, pack.Type, packet.Error)
 		}
 
 		if pack.Data == nil {
@@ -659,12 +659,12 @@ func TestParserv4(t *testing.T) {
 		data, err := p.EncodePayload(
 			[]*packet.Packet{
 				{
-					Type:    packet.OPEN,
+					Type:    packet.Open,
 					Data:    bytes.NewBuffer([]byte("ABC")),
 					Options: nil,
 				},
 				{
-					Type:    packet.CLOSE,
+					Type:    packet.Close,
 					Data:    strings.NewReader("test测试中文和表情字符❤️🧡💛🧓🏾💟"),
 					Options: nil,
 				},
@@ -689,8 +689,8 @@ func TestParserv4(t *testing.T) {
 
 		func() {
 
-			if tp := packs[0].Type; tp != packet.MESSAGE {
-				t.Fatalf(`DecodePayload packs[0].Type value not as expected: %q, want match for %q`, tp, packet.MESSAGE)
+			if tp := packs[0].Type; tp != packet.Message {
+				t.Fatalf(`DecodePayload packs[0].Type value not as expected: %q, want match for %q`, tp, packet.Message)
 			}
 
 			if packs[0].Data == nil {
@@ -715,8 +715,8 @@ func TestParserv4(t *testing.T) {
 
 		func() {
 
-			if tp := packs[1].Type; tp != packet.CLOSE {
-				t.Fatalf(`DecodePayload packs[1].Type value not as expected: %q, want match for %q`, tp, packet.CLOSE)
+			if tp := packs[1].Type; tp != packet.Close {
+				t.Fatalf(`DecodePayload packs[1].Type value not as expected: %q, want match for %q`, tp, packet.Close)
 			}
 
 			if packs[1].Data == nil {
@@ -749,8 +749,8 @@ func TestParserv4(t *testing.T) {
 
 		func() {
 
-			if tp := packs[0].Type; tp != packet.MESSAGE {
-				t.Fatalf(`DecodePayload packs[0].Type value not as expected: %q, want match for %q`, tp, packet.MESSAGE)
+			if tp := packs[0].Type; tp != packet.Message {
+				t.Fatalf(`DecodePayload packs[0].Type value not as expected: %q, want match for %q`, tp, packet.Message)
 			}
 
 			if packs[0].Data == nil {
@@ -775,8 +775,8 @@ func TestParserv4(t *testing.T) {
 
 		func() {
 
-			if tp := packs[1].Type; tp != packet.CLOSE {
-				t.Fatalf(`DecodePayload packs[1].Type value not as expected: %q, want match for %q`, tp, packet.CLOSE)
+			if tp := packs[1].Type; tp != packet.Close {
+				t.Fatalf(`DecodePayload packs[1].Type value not as expected: %q, want match for %q`, tp, packet.Close)
 			}
 
 			if packs[1].Data == nil {

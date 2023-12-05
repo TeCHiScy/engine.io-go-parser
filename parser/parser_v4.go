@@ -98,7 +98,7 @@ func (p *parserv4) DecodePacket(data types.BufferInterface, _ ...bool) (*packet.
 			if _, err := decode.ReadFrom(base64.NewDecoder(base64.StdEncoding, v)); err != nil {
 				return ErrorPacket, err
 			}
-			return &packet.Packet{Type: packet.MESSAGE, Data: decode}, nil
+			return &packet.Packet{Type: packet.Message, Data: decode}, nil
 		}
 		packetType, ok := PacketTypesReverse[msgType]
 		if !ok {
@@ -116,7 +116,7 @@ func (p *parserv4) DecodePacket(data types.BufferInterface, _ ...bool) (*packet.
 	if _, err := io.Copy(decode, data); err != nil {
 		return ErrorPacket, err
 	}
-	return &packet.Packet{Type: packet.MESSAGE, Data: decode}, nil
+	return &packet.Packet{Type: packet.Message, Data: decode}, nil
 }
 
 func (p *parserv4) EncodePayload(packets []*packet.Packet, _ ...bool) (types.BufferInterface, error) {

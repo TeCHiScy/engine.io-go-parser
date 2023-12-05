@@ -7,14 +7,12 @@ import (
 )
 
 type (
-	Type string
-
+	Type    string
 	Options struct {
 		Compress          bool                  `json:"compress" mapstructure:"compress" msgpack:"compress"`
 		WsPreEncoded      types.BufferInterface `json:"wsPreEncoded,omitempty" mapstructure:"wsPreEncoded,omitempty" msgpack:"wsPreEncoded,omitempty"`
 		WsPreEncodedFrame types.BufferInterface `json:"wsPreEncodedFrame,omitempty" mapstructure:"wsPreEncodedFrame,omitempty" msgpack:"wsPreEncodedFrame,omitempty"`
 	}
-
 	Packet struct {
 		Type    Type      `json:"type" mapstructure:"type" msgpack:"type"`
 		Data    io.Reader `json:"data,omitempty" mapstructure:"data,omitempty" msgpack:"data,omitempty"`
@@ -27,12 +25,12 @@ type (
 
 // Packet types.
 const (
-	OPEN    Type = "open"
-	CLOSE   Type = "close"
-	PING    Type = "ping"
-	PONG    Type = "pong"
-	MESSAGE Type = "message"
-	UPGRADE Type = "upgrade"
-	NOOP    Type = "noop"
-	ERROR   Type = "error"
+	Open    Type = "open"
+	Close   Type = "close"
+	Ping    Type = "ping"
+	Pong    Type = "pong"
+	Message Type = "message"
+	Upgrade Type = "upgrade"
+	Noop    Type = "noop"
+	Error   Type = "error"
 )
