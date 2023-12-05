@@ -64,7 +64,7 @@ func IndexByte(b []byte, c byte) int {
 	return bytes.IndexByte(b, c)
 }
 
-// bytes buffer
+// BytesBuffer .
 type BytesBuffer struct {
 	*Buffer
 }
@@ -83,7 +83,7 @@ func NewBytesBufferString(s string) BufferInterface {
 	return &BytesBuffer{NewBufferString(s)}
 }
 
-// string buffer
+// StringBuffer .
 type StringBuffer struct {
 	*Buffer
 }

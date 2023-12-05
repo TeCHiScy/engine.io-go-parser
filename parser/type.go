@@ -17,7 +17,7 @@ const SEPARATOR byte = 0x1E
 
 // Packet types.
 var (
-	PACKET_TYPES map[packet.Type]byte = map[packet.Type]byte{
+	PacketTypes map[packet.Type]byte = map[packet.Type]byte{
 		packet.OPEN:    '0',
 		packet.CLOSE:   '1',
 		packet.PING:    '2',
@@ -27,7 +27,7 @@ var (
 		packet.NOOP:    '6',
 	}
 
-	PACKET_TYPES_REVERSE map[byte]packet.Type = map[byte]packet.Type{
+	PacketTypesReverse map[byte]packet.Type = map[byte]packet.Type{
 		'0': packet.OPEN,
 		'1': packet.CLOSE,
 		'2': packet.PING,
@@ -38,5 +38,5 @@ var (
 	}
 
 	// Premade error packet.
-	ERROR_PACKET = &packet.Packet{Type: packet.ERROR, Data: types.NewStringBufferString(`parser error`)}
+	ErrorPacket = &packet.Packet{Type: packet.ERROR, Data: types.NewStringBufferString(`parser error`)}
 )

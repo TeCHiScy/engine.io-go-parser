@@ -46,12 +46,12 @@ func (p *parserv3) EncodePacket(data *packet.Packet, supportsBinary bool, utf8en
 	switch v := data.Data.(type) {
 	case *types.StringBuffer, *strings.Reader:
 		encode := types.NewStringBuffer(nil)
-		_type, _type_ok := PACKET_TYPES[data.Type]
-		if !_type_ok {
-			return nil, errors.New(`Packet Type error`)
+		typ, ok := PacketTypes[data.Type]
+		if !ok {
+			return nil, errors.New(`packet type error`)
 		}
 		// Sending data as a utf-8 string
-		if err := encode.WriteByte(_type); err != nil {
+		if err := encode.WriteByte(typ); err != nil {
 			return nil, err
 		}
 		// data fragment is optional
@@ -70,11 +70,11 @@ func (p *parserv3) EncodePacket(data *packet.Packet, supportsBinary bool, utf8en
 		if !supportsBinary {
 			// Encodes a packet with binary data in a base64 string
 			encode := types.NewStringBuffer(nil)
-			_type, _type_ok := PACKET_TYPES[data.Type]
-			if !_type_ok {
-				return nil, errors.New(`Packet Type error`)
+			typ, ok := PacketTypes[data.Type]
+			if !ok {
+				return nil, errors.New(`packet type error`)
 			}
-			if _, err := encode.Write([]byte{'b', _type}); err != nil {
+			if _, err := encode.Write([]byte{'b', typ}); err != nil {
 				return nil, err
 			}
 			b64 := base64.NewEncoder(base64.StdEncoding, encode)
@@ -86,11 +86,11 @@ func (p *parserv3) EncodePacket(data *packet.Packet, supportsBinary bool, utf8en
 			return encode, nil
 		}
 		encode := types.NewBytesBuffer(nil)
-		_type, _type_ok := PACKET_TYPES[data.Type]
-		if !_type_ok {
-			return nil, errors.New(`Packet Type error`)
+		typ, ok := PacketTypes[data.Type]
+		if !ok {
+			return nil, errors.New(`packet type error`)
 		}
-		if err := encode.WriteByte(_type - '0'); err != nil {
+		if err := encode.WriteByte(typ - '0'); err != nil {
 			return nil, err
 		}
 		if _, err := io.Copy(encode, v); err != nil {
@@ -100,11 +100,11 @@ func (p *parserv3) EncodePacket(data *packet.Packet, supportsBinary bool, utf8en
 	}
 	// default nil
 	encode := types.NewStringBuffer(nil)
-	_type, _type_ok := PACKET_TYPES[data.Type]
-	if !_type_ok {
-		return nil, errors.New(`Packet Type error`)
+	typ, ok := PacketTypes[data.Type]
+	if !ok {
+		return nil, errors.New(`packet type error`)
 	}
-	if err := encode.WriteByte(_type); err != nil {
+	if err := encode.WriteByte(typ); err != nil {
 		return nil, err
 	}
 	return encode, nil
@@ -113,7 +113,7 @@ func (p *parserv3) EncodePacket(data *packet.Packet, supportsBinary bool, utf8en
 // Decodes a packet. Data also available as an ArrayBuffer if requested.
 func (p *parserv3) DecodePacket(data types.BufferInterface, utf8decode ...bool) (*packet.Packet, error) {
 	if data == nil {
-		return ERROR_PACKET, errors.New(`parser error`)
+		return ErrorPacket, errors.New(`parser error`)
 	}
 
 	utf8de := false
@@ -123,7 +123,7 @@ func (p *parserv3) DecodePacket(data types.BufferInterface, utf8decode ...bool) 
 
 	msgType, err := data.ReadByte()
 	if err != nil {
-		return ERROR_PACKET, err
+		return ErrorPacket, err
 	}
 
 	switch v := data.(type) {
@@ -132,43 +132,43 @@ func (p *parserv3) DecodePacket(data types.BufferInterface, utf8decode ...bool) 
 			// Decodes a packet encoded in a base64 string.
 			msgType, err = data.ReadByte()
 			if err != nil {
-				return ERROR_PACKET, err
+				return ErrorPacket, err
 			}
-			packetType, ok := PACKET_TYPES_REVERSE[msgType]
+			packetType, ok := PacketTypesReverse[msgType]
 			if !ok {
-				return ERROR_PACKET, errors.New(fmt.Sprintf(`Parsing error, unknown data type [%c]`, msgType))
+				return ErrorPacket, fmt.Errorf(`parsing error, unknown data type [%c]`, msgType)
 			}
 			decode := types.NewBytesBuffer(nil)
 			if _, err := decode.ReadFrom(base64.NewDecoder(base64.StdEncoding, v)); err != nil {
-				return ERROR_PACKET, err
+				return ErrorPacket, err
 			}
 			return &packet.Packet{Type: packetType, Data: decode}, nil
 		}
-		packetType, ok := PACKET_TYPES_REVERSE[msgType]
+		packetType, ok := PacketTypesReverse[msgType]
 		if !ok {
-			return ERROR_PACKET, errors.New(fmt.Sprintf(`Parsing error, unknown data type [%c]`, msgType))
+			return ErrorPacket, fmt.Errorf(`parsing error, unknown data type [%c]`, msgType)
 		}
 		decode := types.NewStringBuffer(nil)
 		if utf8de {
 			if _, err := decode.ReadFrom(utils.NewUtf8Decoder(v)); err != nil {
-				return ERROR_PACKET, err
+				return ErrorPacket, err
 			}
 		} else {
 			if _, err := decode.ReadFrom(v); err != nil {
-				return ERROR_PACKET, err
+				return ErrorPacket, err
 			}
 		}
 		return &packet.Packet{Type: packetType, Data: decode}, nil
 	}
 
 	// Default case
-	packetType, ok := PACKET_TYPES_REVERSE[msgType+'0']
+	packetType, ok := PacketTypesReverse[msgType+'0']
 	if !ok {
-		return ERROR_PACKET, errors.New(fmt.Sprintf(`Parsing error, unknown data type [%c]`, msgType+'0'))
+		return ErrorPacket, fmt.Errorf(`parsing error, unknown data type [%c]`, msgType+'0')
 	}
 	decode := types.NewBytesBuffer(nil)
 	if _, err := io.Copy(decode, data); err != nil {
-		return ERROR_PACKET, err
+		return ErrorPacket, err
 	}
 	return &packet.Packet{Type: packetType, Data: decode}, nil
 }

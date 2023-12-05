@@ -136,7 +136,7 @@ type utf8encoder struct {
 	out [bufferSize]byte // output buffer
 }
 
-// NewEncoder returns an io.Writer that writes lowercase hexadecimal characters to w.
+// NewUtf8Encoder returns an io.Writer that writes lowercase hexadecimal characters to w.
 func NewUtf8Encoder(w io.Writer) io.Writer {
 	return &utf8encoder{w: w}
 }
